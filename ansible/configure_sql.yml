@@ -1,0 +1,19 @@
+---
+- name: Configure SQL Server settings
+  hosts: sqlvm
+  gather_facts: false
+  tasks:
+    - name: Ensure temp directory
+      ansible.windows.win_file:
+        path: C:\\temp
+        state: directory
+
+    - name: Copy SQL configuration script
+      ansible.windows.win_copy:
+        src: files/configure_sqlserver.sql
+        dest: C:\\temp\\configure_sqlserver.sql
+
+    - name: Execute configuration script
+      ansible.windows.win_command: >
+        "C:\\Program Files\\Microsoft SQL Server\\Client SDK\\ODBC\\170\\Tools\\Binn\\sqlcmd.exe"
+        -b -S localhost -E -i C:\\temp\\configure_sqlserver.sql
